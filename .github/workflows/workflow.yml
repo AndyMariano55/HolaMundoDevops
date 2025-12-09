@@ -1,0 +1,30 @@
+name: CI/CD Docker + Render
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1) Clonar repo
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      # 2) Login a Docker Hub
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # 3) Build de la imagen
+      - name: Build Docker image
+        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/holamundoapp:latest .
+
+      # 4) Push de la imagen
+      - name: Push Docker image
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/holamundoapp:latest
